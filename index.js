@@ -18,7 +18,8 @@ module.exports = vkko;
 var services = requireAll({ dirname: __dirname + '/lib/services', filter: /(.*)\.js$/ });
 
 /**
- * @@param {String} url
+ * @param {String} url
+ * @return {String}
  */
 
 function vkko(url) {
