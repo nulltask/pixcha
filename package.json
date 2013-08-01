@@ -2,10 +2,19 @@
   "name": "vkko",
   "version": "0.0.0",
   "description": "Image URL extractor",
-  "keywords": ["image", "extractor", "url"],
+  "keywords": [
+    "image",
+    "url",
+    "extractor"
+  ],
   "author": "Seiya Konno <nulltask@gmail.com>",
-  "repository": { "type": "git", "url": "git@github.com:uniba/vkko.git" },
-  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:uniba/vkko.git"
+  },
+  "dependencies": {
+    "require-all": "0.0.6"
+  },
   "devDependencies": {
     "mocha": "*",
     "should": "*"
