@@ -16,5 +16,4 @@ clean:
 build-standalone:
 	@component build --standalone pixcha --out . --name pixcha
 
-
 .PHONY: test
