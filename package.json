@@ -12,9 +12,6 @@
     "type": "git",
     "url": "git@github.com:uniba/pixcha.git"
   },
-  "dependencies": {
-    "require-all": "0.0.6"
-  },
   "devDependencies": {
     "mocha": "*",
     "should": "*"

@@ -15,7 +15,7 @@ module.exports = pixcha;
  * Services.
  */
 
-var services = requireAll({ dirname: __dirname + '/lib/services', filter: /(.*)\.js$/ });
+var services = require('./lib/services');
 
 /**
  * @param {String} url
