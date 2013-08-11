@@ -13,15 +13,20 @@ var services = require('./lib/services');
 
 /**
  * @param {String} url
+ * @param {Object} options
  * @return {String}
  */
 
-function pixcha(url) {
+function pixcha(url, options) {
+  options = options || {};
+
   var service = pixcha.service(url);
-  console.log(service);
+
   if (!service) return null;
 
-  var replace = services[service].replace;
+  var replace = options.thumbnail
+    ? services[service].thumbnail
+    : (services[service].larger || services[service].thumbnail);
 
   if ('function' === typeof replace) {
     return replace.call(null, url);
@@ -29,6 +34,15 @@ function pixcha(url) {
 
   return url.replace.apply(url, replace);
 }
+
+/**
+ * @param {String} url
+ * @return {String}
+ */
+
+pixcha.thumbnail = function(url) {
+  return pixcha(url, { thumbnail: true });
+};
 
 /**
  * @param {String} url
