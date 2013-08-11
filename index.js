@@ -6,10 +6,10 @@
 var requireAll = require('require-all');
 
 /**
- * Expose `vkko`.
+ * Expose `pixcha`.
  */
 
-module.exports = vkko;
+module.exports = pixcha;
 
 /**
  * Services.
@@ -22,8 +22,8 @@ var services = requireAll({ dirname: __dirname + '/lib/services', filter: /(.*)\
  * @return {String}
  */
 
-function vkko(url) {
-  var service = vkko.service(url);
+function pixcha(url) {
+  var service = pixcha.service(url);
   console.log(service);
   if (!service) return null;
 
@@ -41,7 +41,7 @@ function vkko(url) {
  * @return {String}
  */
 
-vkko.service = function(url) {
+pixcha.service = function(url) {
   for (var service in services) {
     var match = url.match(services[service].pattern);
     if (match) return service;
