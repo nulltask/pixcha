@@ -1,0 +1,14 @@
+{
+  "name": "pixcha",
+  "version": "0.0.0",
+  "description": "Image URL extractor.",
+  "keywords": [
+    "image",
+    "url",
+    "extractor"
+  ],
+  "scripts": [
+    "index.js"
+  ],
+  "license": "MIT"
+}
