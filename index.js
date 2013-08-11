@@ -1,11 +1,5 @@
 
 /**
- * Module dependencies.
- */
-
-var requireAll = require('require-all');
-
-/**
  * Expose `pixcha`.
  */
 
