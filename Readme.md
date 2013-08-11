@@ -9,12 +9,21 @@ Install via npm.
 
     $ npm install pixcha
 
+via [component](http://component.io)
+
+    $ component install uniba/pixcha
+
+via [bower](http://bower.io)
+
+    $ bower install pixcha
+
 ## Example
 
 ```javascript
 var pixcha = require('pixcha');
 
-pixcha('http://twitpic.com/d5vkh9');  // => 'http://twitpic.com/show/thumb/d5vkh9'
+pixcha('http://twitpic.com/d5vkh9');  // => 'http://d3j5vwomefv46c.cloudfront.net/photos/large/795931245.jpg'
+pixcha.thumbnail('http://twitpic.com/d5vkh9');  // => 'http://twitpic.com/show/thumb/d5vkh9'
 pixcha.service('http://twitpic.com/d5vkh9');  // => 'twitpic
 ```
 
