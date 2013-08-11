@@ -8,7 +8,21 @@
     "extractor"
   ],
   "scripts": [
-    "index.js"
+    "index.js",
+    "lib/services.js",
+    "lib/services/imgly.js",
+    "lib/services/instagram.js",
+    "lib/services/lockerz.js",
+    "lib/services/mobyto.js",
+    "lib/services/pbstwimg.js",
+    "lib/services/plixi.js",
+    "lib/services/tweetphoto.js",
+    "lib/services/twimg.js",
+    "lib/services/twipple.js",
+    "lib/services/twitpic.js",
+    "lib/services/twitteryfrog.js",
+    "lib/services/yfrog.js",
+    "lib/services/youtube.js"
   ],
   "license": "MIT"
 }
