@@ -56,3 +56,8 @@ pixcha.service = function(url) {
   }
   return null;
 };
+
+/**
+ * @param {String} name
+ * @param {}
+ */
