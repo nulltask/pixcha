@@ -17,22 +17,36 @@ var services = require('./lib/services');
  * @return {String}
  */
 
-function pixcha(url, options) {
+function pixcha(url, options, callback) {
+  if ('function' === typeof options) {
+    callback = options;
+    options = {};
+  }
+  if (!callback) {
+    callback = function() {};
+  }
   options = options || {};
 
   var service = pixcha.service(url);
 
-  if (!service) return null;
+  if (!service) {
+    callback(new Error('service not found.'));
+    return null;
+  }
 
   var replace = options.thumbnail
     ? services[service].thumbnail
     : (services[service].larger || services[service].thumbnail);
 
   if ('function' === typeof replace) {
-    return replace.call(null, url);
+    var ret = replace.call(null, url, callback);
+    callback(null, ret);
+    return ret;
   }
 
-  return url.replace.apply(url, replace);
+  var ret = url.replace.apply(url, replace);
+  callback(null, ret);
+  return ret;
 }
 
 /**

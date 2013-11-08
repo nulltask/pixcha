@@ -11,7 +11,7 @@ Install via npm.
 
 via [component](http://component.io)
 
-    $ component install uniba/pixcha
+    $ component install nulltask/pixcha
 
 via [bower](http://bower.io)
 
@@ -22,8 +22,14 @@ via [bower](http://bower.io)
 ```javascript
 var pixcha = require('pixcha');
 
-pixcha('http://twitpic.com/d5vkh9');  // => 'http://d3j5vwomefv46c.cloudfront.net/photos/large/795931245.jpg'
-pixcha.thumbnail('http://twitpic.com/d5vkh9');  // => 'http://twitpic.com/show/thumb/d5vkh9'
+pixcha('http://twitpic.com/d5vkh9', function(err, url) {
+  // url => 'http://d3j5vwomefv46c.cloudfront.net/photos/large/795931245.jpg'
+});
+
+pixcha.thumbnail('http://twitpic.com/d5vkh9', function(err, url) {
+  // url => 'http://twitpic.com/show/thumb/d5vkh9'
+});
+
 pixcha.service('http://twitpic.com/d5vkh9');  // => 'twitpic
 ```
 
