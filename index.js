@@ -40,7 +40,9 @@ function pixcha(url, options, callback) {
 
   if ('function' === typeof replace) {
     var ret = replace.call(null, url, callback);
-    callback(null, ret);
+    if (replace.length < 2) {
+      callback(null, ret);
+    }
     return ret;
   }
 
