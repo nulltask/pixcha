@@ -56,8 +56,8 @@ function pixcha(url, options, callback) {
  * @return {String}
  */
 
-pixcha.thumbnail = function(url) {
-  return pixcha(url, { thumbnail: true });
+pixcha.thumbnail = function(url, callback) {
+  return pixcha(url, { thumbnail: true }, callback);
 };
 
 /**
