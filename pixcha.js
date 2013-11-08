@@ -1412,7 +1412,9 @@ function pixcha(url, options, callback) {
 
   if ('function' === typeof replace) {
     var ret = replace.call(null, url, callback);
-    callback(null, ret);
+    if (replace.length < 2) {
+      callback(null, ret);
+    }
     return ret;
   }
 
@@ -1426,8 +1428,8 @@ function pixcha(url, options, callback) {
  * @return {String}
  */
 
-pixcha.thumbnail = function(url) {
-  return pixcha(url, { thumbnail: true });
+pixcha.thumbnail = function(url, callback) {
+  return pixcha(url, { thumbnail: true }, callback);
 };
 
 /**
