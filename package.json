@@ -15,5 +15,8 @@
   "devDependencies": {
     "mocha": "*",
     "should": "*"
+  },
+  "dependencies": {
+    "superagent": "~0.15.7"
   }
 }

@@ -24,5 +24,9 @@
     "lib/services/yfrog.js",
     "lib/services/youtube.js"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "remotes": [],
+  "dependencies": {
+    "visionmedia/superagent": "0.15.7"
+  }
 }
