@@ -82,3 +82,15 @@ pixcha.service = function(url) {
  * @param {String} name
  * @param {}
  */
+
+pixcha.use = function(name, mod) {
+  if (!mod.pattern) {
+    throw new Error('.pattern required');
+  }
+  if (!mod.thumbnail) {
+    throw new Error('.thumbnail required.');
+  }
+  services[name] = mod;
+
+  return this;
+};
