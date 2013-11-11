@@ -1,7 +1,7 @@
 
 test:
 	@./node_modules/.bin/mocha \
-		--require should \
+		--require better-assert \
 		--reporter spec
 
 build: index.js components
