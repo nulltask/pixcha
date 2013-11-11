@@ -1411,11 +1411,16 @@ function pixcha(url, options, callback) {
     : (services[service].larger || services[service].thumbnail);
 
   if ('function' === typeof replace) {
-    var ret = replace.call(null, url, callback);
-    if (replace.length < 2) {
-      callback(null, ret);
+    try {
+      var ret = replace.call(null, url, callback);
+      if (replace.length < 2) {
+        callback(null, ret);
+      }
+      return ret;
+    } catch (e) {
+      callback(e);
+      return e;
     }
-    return ret;
   }
 
   var ret = url.replace.apply(url, replace);
@@ -1449,6 +1454,18 @@ pixcha.service = function(url) {
  * @param {String} name
  * @param {}
  */
+
+pixcha.use = function(name, mod) {
+  if (!mod.pattern) {
+    throw new Error('.pattern required');
+  }
+  if (!mod.thumbnail) {
+    throw new Error('.thumbnail required.');
+  }
+  services[name] = mod;
+
+  return this;
+};
 });
 require.register("pixcha/lib/services.js", function(exports, require, module){
 
