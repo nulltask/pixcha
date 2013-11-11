@@ -39,11 +39,16 @@ function pixcha(url, options, callback) {
     : (services[service].larger || services[service].thumbnail);
 
   if ('function' === typeof replace) {
-    var ret = replace.call(null, url, callback);
-    if (replace.length < 2) {
-      callback(null, ret);
+    try {
+      var ret = replace.call(null, url, callback);
+      if (replace.length < 2) {
+        callback(null, ret);
+      }
+      return ret;
+    } catch (e) {
+      callback(e);
+      return e;
     }
-    return ret;
   }
 
   var ret = url.replace.apply(url, replace);
