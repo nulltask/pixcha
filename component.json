@@ -30,6 +30,7 @@
   "dependencies": {
     "visionmedia/superagent": "0.15.7",
     "learnboost/jsonp": "0.0.3",
-    "ForbesLindesay/is-browser": "2.0.0"
+    "ForbesLindesay/is-browser": "2.0.0",
+    "timoxley/next-tick": "*"
   }
 }
