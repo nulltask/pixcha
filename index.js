@@ -1,5 +1,11 @@
 
 /**
+ * Module dependencies.
+ */
+
+var nextTick = require('next-tick');
+
+/**
  * Expose `pixcha`.
  */
 
@@ -42,7 +48,10 @@ function pixcha(url, options, callback) {
     try {
       var ret = replace.call(null, url, callback);
       if (replace.length < 2) {
-        callback(null, ret);
+        // make async.
+        nextTick(function() {
+          callback(null, ret);
+        });
       }
       return ret;
     } catch (e) {
