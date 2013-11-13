@@ -1607,7 +1607,49 @@ function jsonp(url, opts, fn){
 require.register("ForbesLindesay-is-browser/client.js", function(exports, require, module){
 module.exports = true;
 });
+require.register("timoxley-next-tick/index.js", function(exports, require, module){
+"use strict"
+
+if (typeof setImmediate == 'function') {
+  module.exports = function(f){ setImmediate(f) }
+}
+// legacy node.js
+else if (typeof process != 'undefined' && typeof process.nextTick == 'function') {
+  module.exports = process.nextTick
+}
+// fallback for other environments / postMessage behaves badly on IE8
+else if (typeof window == 'undefined' || window.ActiveXObject || !window.postMessage) {
+  module.exports = function(f){ setTimeout(f) };
+} else {
+  var q = [];
+
+  window.addEventListener('message', function(){
+    var i = 0;
+    while (i < q.length) {
+      try { q[i++](); }
+      catch (e) {
+        q = q.slice(i);
+        window.postMessage('tic!', '*');
+        throw e;
+      }
+    }
+    q.length = 0;
+  }, true);
+
+  module.exports = function(fn){
+    if (!q.length) window.postMessage('tic!', '*');
+    q.push(fn);
+  }
+}
+
+});
 require.register("pixcha/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies.
+ */
+
+var nextTick = require('next-tick');
 
 /**
  * Expose `pixcha`.
@@ -1652,7 +1694,10 @@ function pixcha(url, options, callback) {
     try {
       var ret = replace.call(null, url, callback);
       if (replace.length < 2) {
-        callback(null, ret);
+        // make async.
+        nextTick(function() {
+          callback(null, ret);
+        });
       }
       return ret;
     } catch (e) {
@@ -1892,6 +1937,8 @@ module.exports = {
 
 
 
+
+
 require.alias("visionmedia-superagent/lib/client.js", "pixcha/deps/superagent/lib/client.js");
 require.alias("visionmedia-superagent/lib/client.js", "pixcha/deps/superagent/index.js");
 require.alias("visionmedia-superagent/lib/client.js", "superagent/index.js");
@@ -1911,7 +1958,10 @@ require.alias("learnboost-jsonp/index.js", "learnboost-jsonp/index.js");
 require.alias("ForbesLindesay-is-browser/client.js", "pixcha/deps/is-browser/client.js");
 require.alias("ForbesLindesay-is-browser/client.js", "pixcha/deps/is-browser/index.js");
 require.alias("ForbesLindesay-is-browser/client.js", "is-browser/index.js");
-require.alias("ForbesLindesay-is-browser/client.js", "ForbesLindesay-is-browser/index.js");if (typeof exports == "object") {
+require.alias("ForbesLindesay-is-browser/client.js", "ForbesLindesay-is-browser/index.js");
+require.alias("timoxley-next-tick/index.js", "pixcha/deps/next-tick/index.js");
+require.alias("timoxley-next-tick/index.js", "next-tick/index.js");
+if (typeof exports == "object") {
   module.exports = require("pixcha");
 } else if (typeof define == "function" && define.amd) {
   define(function(){ return require("pixcha"); });
