@@ -1369,6 +1369,244 @@ request.put = function(url, data, fn){
 module.exports = request;
 
 });
+require.register("visionmedia-debug/index.js", function(exports, require, module){
+if ('undefined' == typeof window) {
+  module.exports = require('./lib/debug');
+} else {
+  module.exports = require('./debug');
+}
+
+});
+require.register("visionmedia-debug/debug.js", function(exports, require, module){
+
+/**
+ * Expose `debug()` as the module.
+ */
+
+module.exports = debug;
+
+/**
+ * Create a debugger with the given `name`.
+ *
+ * @param {String} name
+ * @return {Type}
+ * @api public
+ */
+
+function debug(name) {
+  if (!debug.enabled(name)) return function(){};
+
+  return function(fmt){
+    fmt = coerce(fmt);
+
+    var curr = new Date;
+    var ms = curr - (debug[name] || curr);
+    debug[name] = curr;
+
+    fmt = name
+      + ' '
+      + fmt
+      + ' +' + debug.humanize(ms);
+
+    // This hackery is required for IE8
+    // where `console.log` doesn't have 'apply'
+    window.console
+      && console.log
+      && Function.prototype.apply.call(console.log, console, arguments);
+  }
+}
+
+/**
+ * The currently active debug mode names.
+ */
+
+debug.names = [];
+debug.skips = [];
+
+/**
+ * Enables a debug mode by name. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} name
+ * @api public
+ */
+
+debug.enable = function(name) {
+  try {
+    localStorage.debug = name;
+  } catch(e){}
+
+  var split = (name || '').split(/[\s,]+/)
+    , len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    name = split[i].replace('*', '.*?');
+    if (name[0] === '-') {
+      debug.skips.push(new RegExp('^' + name.substr(1) + '$'));
+    }
+    else {
+      debug.names.push(new RegExp('^' + name + '$'));
+    }
+  }
+};
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+debug.disable = function(){
+  debug.enable('');
+};
+
+/**
+ * Humanize the given `ms`.
+ *
+ * @param {Number} m
+ * @return {String}
+ * @api private
+ */
+
+debug.humanize = function(ms) {
+  var sec = 1000
+    , min = 60 * 1000
+    , hour = 60 * min;
+
+  if (ms >= hour) return (ms / hour).toFixed(1) + 'h';
+  if (ms >= min) return (ms / min).toFixed(1) + 'm';
+  if (ms >= sec) return (ms / sec | 0) + 's';
+  return ms + 'ms';
+};
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+debug.enabled = function(name) {
+  for (var i = 0, len = debug.skips.length; i < len; i++) {
+    if (debug.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (var i = 0, len = debug.names.length; i < len; i++) {
+    if (debug.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * Coerce `val`.
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+// persist
+
+try {
+  if (window.localStorage) debug.enable(localStorage.debug);
+} catch(e){}
+
+});
+require.register("learnboost-jsonp/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies
+ */
+
+var debug = require('debug')('jsonp');
+
+/**
+ * Module exports.
+ */
+
+module.exports = jsonp;
+
+/**
+ * Callback index.
+ */
+
+var count = 0;
+
+/**
+ * Noop function.
+ */
+
+function noop(){};
+
+/**
+ * JSONP handler
+ *
+ * Options:
+ *  - param {String} qs parameter (`callback`)
+ *  - timeout {Number} how long after a timeout error is emitted (`60000`)
+ *
+ * @param {String} url
+ * @param {Object|Function} optional options / callback
+ * @param {Function} optional callback
+ */
+
+function jsonp(url, opts, fn){
+  if ('function' == typeof opts) {
+    fn = opts;
+    opts = {};
+  }
+
+  var opts = opts || {};
+  var param = opts.param || 'callback';
+  var timeout = null != opts.timeout ? opts.timeout : 60000;
+  var enc = encodeURIComponent;
+  var target = document.getElementsByTagName('script')[0];
+  var script;
+  var timer;
+
+  // generate a unique id for this request
+  var id = count++;
+
+  if (timeout) {
+    timer = setTimeout(function(){
+      cleanup();
+      fn && fn(new Error('Timeout'));
+    }, timeout);
+  }
+
+  function cleanup(){
+    target.parentNode.removeChild(script);
+    window['__jp' + id] = noop;
+  }
+
+  window['__jp' + id] = function(data){
+    debug('jsonp got', data);
+    if (timer) clearTimeout(timer);
+    cleanup();
+    fn && fn(null, data);
+  };
+
+  // add qs component
+  url += (~url.indexOf('?') ? '&' : '?') + param + '=' + enc('__jp' + id + '');
+  url = url.replace('?&', '?');
+
+  debug('jsonp req "%s"', url);
+
+  // create script
+  script = document.createElement('script');
+  script.src = url;
+  target.parentNode.insertBefore(script, target);
+};
+
+});
+require.register("ForbesLindesay-is-browser/client.js", function(exports, require, module){
+module.exports = true;
+});
 require.register("pixcha/index.js", function(exports, require, module){
 
 /**
@@ -1580,7 +1818,13 @@ require.register("pixcha/lib/services/twitpic.js", function(exports, require, mo
  * Module dependencies.
  */
 
+var jsonp = require('jsonp')
 var request = require('superagent');
+var browser = require('is-browser');
+
+var jsonUrl = 'http://api.twitpic.com/2/media/show.json';
+var jsonpUrl = jsonUrl + 'p';
+var baseUrl = 'http://d3j5vwomefv46c.cloudfront.net/photos/large/';
 
 module.exports = {
   pattern: /http:\/\/twitpic\.com\/\w{6}/g,
@@ -1591,19 +1835,27 @@ module.exports = {
     }
     var parsed = url.match(/http:\/\/twitpic\.com\/(\w{6})/);
     var id = parseInt(parsed[1], 36);
+    var params = { id: parsed[1] };
 
-    request('http://api.twitpic.com/2/media/show.json')
-    .query({ id: parsed[1] })
-    .end(function(res) {
-      if (!res.ok) {
-        return callback(res);
-      }
-      var ext = res.body.type;
-      return callback(null,
-        'http://d3j5vwomefv46c.cloudfront.net/photos/large/' + id + '.' + ext);
-    });
+    if (browser) {
+      jsonp(jsonpUrl + '?id=' + params.id, function(err, data) {
+        if (err) return callback(err);
+        var ext = data.type;
+        callback(null, baseUrl + id + '.' + ext);
+      });
+    } else {
+      request(jsonUrl)
+      .query(params)
+      .end(function(res) {
+        if (!res.ok) return callback(res);
+        var ext = res.body.type;
+        callback(null, baseUrl + id + '.' + ext);
+      });
+    }
   }
 };
+
+
 });
 require.register("pixcha/lib/services/twitteryfrog.js", function(exports, require, module){
 
@@ -1636,6 +1888,10 @@ module.exports = {
 
 
 
+
+
+
+
 require.alias("visionmedia-superagent/lib/client.js", "pixcha/deps/superagent/lib/client.js");
 require.alias("visionmedia-superagent/lib/client.js", "pixcha/deps/superagent/index.js");
 require.alias("visionmedia-superagent/lib/client.js", "superagent/index.js");
@@ -1644,7 +1900,18 @@ require.alias("component-indexof/index.js", "component-emitter/deps/indexof/inde
 
 require.alias("RedVentures-reduce/index.js", "visionmedia-superagent/deps/reduce/index.js");
 
-require.alias("visionmedia-superagent/lib/client.js", "visionmedia-superagent/index.js");if (typeof exports == "object") {
+require.alias("visionmedia-superagent/lib/client.js", "visionmedia-superagent/index.js");
+require.alias("learnboost-jsonp/index.js", "pixcha/deps/jsonp/index.js");
+require.alias("learnboost-jsonp/index.js", "pixcha/deps/jsonp/index.js");
+require.alias("learnboost-jsonp/index.js", "jsonp/index.js");
+require.alias("visionmedia-debug/index.js", "learnboost-jsonp/deps/debug/index.js");
+require.alias("visionmedia-debug/debug.js", "learnboost-jsonp/deps/debug/debug.js");
+
+require.alias("learnboost-jsonp/index.js", "learnboost-jsonp/index.js");
+require.alias("ForbesLindesay-is-browser/client.js", "pixcha/deps/is-browser/client.js");
+require.alias("ForbesLindesay-is-browser/client.js", "pixcha/deps/is-browser/index.js");
+require.alias("ForbesLindesay-is-browser/client.js", "is-browser/index.js");
+require.alias("ForbesLindesay-is-browser/client.js", "ForbesLindesay-is-browser/index.js");if (typeof exports == "object") {
   module.exports = require("pixcha");
 } else if (typeof define == "function" && define.amd) {
   define(function(){ return require("pixcha"); });
