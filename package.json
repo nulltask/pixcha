@@ -10,7 +10,7 @@
   "author": "Seiya Konno <nulltask@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git@github.com:uniba/pixcha.git"
+    "url": "git@github.com:nulltask/pixcha.git"
   },
   "devDependencies": {
     "mocha": "*",

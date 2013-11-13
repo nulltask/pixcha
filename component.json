@@ -1,6 +1,7 @@
 {
   "name": "pixcha",
   "version": "0.0.2",
+  "repo": "nulltask/pixcha",
   "description": "Image URL extractor.",
   "keywords": [
     "image",
